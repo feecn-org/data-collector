@@ -11,7 +11,8 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages = "com.feecn.org")
 public class CollectApplication {
 
-	public static void main(String[] args) {
+	public static void main(String[] args){
 		SpringApplication.run(CollectApplication.class, args);
 	}
+
 }
