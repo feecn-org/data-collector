@@ -5,6 +5,9 @@ import org.elasticsearch.index.query.QueryBuilder;
 import java.util.List;
 
 
+/**
+ * @author pczhangyu
+ */
 public final class DefaultQuerySearchBuilder extends BoolQuerySearchBuilder {
 
     private List<QueryBuilder> mustQueryBuilders;

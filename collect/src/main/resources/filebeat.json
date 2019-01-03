@@ -1,0 +1,38 @@
+{
+  "@timestamp": "2018-12-27T02:10:51.616Z",
+  "@metadata": {
+    "beat": "filebeat",
+    "type": "doc",
+    "version": "6.5.2",
+    "topic": "Apache_AccessLog"
+  },
+  "input": {
+    "type": "log"
+  },
+  "fields": {
+    "log_topic": "Apache_AccessLog",
+    "ip": "122.119.181.125"
+  },
+  "host": {
+    "name": "vm-vmw96807-apc",
+    "containerized": true,
+    "architecture": "x86_64",
+    "os": {
+      "platform": "redhat",
+      "version": "6.5 (Santiago)",
+      "family": "redhat",
+      "codename": "Santiago"
+    }
+  },
+  "beat": {
+    "version": "6.5.2",
+    "name": "vm-vmw96807-apc",
+    "hostname": "vm-vmw96807-apc"
+  },
+  "source": "/opt/app/apache2/logs/accesslog.201812271000",
+  "offset": 1525017,
+  "message": "10.220.42.174 - - [27/Dec/2018:10:10:51 +0800] \"POST /scet/servlet/com.travelsky.et.web.cwip.servlet.ReceiveServlet HTTP/1.1\" 200 4293 unknown.travelsky.com:80 \"-\" \"-\" \"Jakarta Commons-HttpClient/3.0\" 3283 4807 - 122.119.160.46 17220",
+  "prospector": {
+    "type": "log"
+  }
+}

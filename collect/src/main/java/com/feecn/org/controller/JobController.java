@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 
 /**
  *
@@ -27,7 +26,7 @@ public class JobController {
     private Scheduler scheduler;
 
     @PostMapping(value="/add")
-    public void addJob(@RequestParam(value="jobClassName")String jobClassName,
+    public JSONObject addJob(@RequestParam(value="jobClassName")String jobClassName,
                        @RequestParam(value="jobGroupName")String jobGroupName,
                        @RequestParam(value="cronExpression")String cronExpression,
                        @RequestBody JSONObject paramObject
@@ -35,12 +34,15 @@ public class JobController {
         scheduler.start();
         logger.info(String.format("object is %s",paramObject.toJSONString()));
         JobDataMap jobDataMap = new JobDataMap();
-        jobDataMap.put("paramObject",jobDataMap);
+        jobDataMap.put("paramObject",paramObject);
         JobDetail jobDetail = JobBuilder.newJob(getClass(jobClassName).getClass()).withIdentity(jobClassName, jobGroupName).setJobData(jobDataMap).build();
         CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression);
         CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(jobClassName, jobGroupName).withSchedule(scheduleBuilder).build();
         try {
             scheduler.scheduleJob(jobDetail, trigger);
+            JSONObject re = new JSONObject();
+            re.put("result",200);
+            return re;
         } catch (SchedulerException e) {
             throw new Exception("创建定时任务失败");
         }

@@ -12,6 +12,7 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.springframework.util.StringUtils;
 
 import java.net.UnknownHostException;
@@ -47,7 +48,7 @@ public abstract class AbstractSearchBuilder extends ElasticBuilder{
         searchRequestBuilder.setFrom((currentPage - 1) * pageSize).setSize(pageSize);
         // init QueryBuilder
         QueryBuilder queryBuilder = queryBuilder();
-        if(queryBuilder == null){
+        if(queryBuilder == null) {
             throw new NullPointerException("QueryBuilder can not be null !");
         }
         searchRequestBuilder.setQuery(queryBuilder);
@@ -59,8 +60,10 @@ public abstract class AbstractSearchBuilder extends ElasticBuilder{
         List<T> tlist = new ArrayList<T>();
         for (SearchHit hit : hits) {
             String json = hit.getSourceAsString();
-            JSONObject jsonObject = JSONObject.parseObject(json);
-            tlist.add(jsonObject.toJavaObject(jsonObject, clazz));
+            /*JSONObject jsonObject = JSONObject.parseObject(json);
+            tlist.add(jsonObject.toJavaObject(jsonObject, clazz));*/
+            T t = JSONObject.parseObject(json, clazz);
+            tlist.add(t);
         }
         map.put("data", tlist);
         return map;
@@ -74,6 +77,7 @@ public abstract class AbstractSearchBuilder extends ElasticBuilder{
         searchRequestBuilder.setTypes(typeName);
         // 设置分页
         searchRequestBuilder.setFrom((currentPage - 1) * pageSize).setSize(pageSize);
+        //排序 .addSort(orderStr, SortOrder.ASC);
         // init QueryBuilder
         QueryBuilder queryBuilder = queryBuilder();
         if(queryBuilder == null){
@@ -81,6 +85,42 @@ public abstract class AbstractSearchBuilder extends ElasticBuilder{
         }
         searchRequestBuilder.setQuery(queryBuilder);
         SearchResponse searchResponse = searchRequestBuilder.execute().get();
+        SearchHits searchHits = searchResponse.getHits();
+        Map<String, Object> map = new HashMap<>();
+        map.put("totalCount", searchHits.getTotalHits());
+        SearchHit[] hits = searchHits.getHits();
+        JSONArray searchResult = new JSONArray();
+        for (SearchHit hit : hits) {
+            String json = hit.getSourceAsString();
+            String id=hit.getId();
+            JSONObject jsonObject = JSONObject.parseObject(json);
+            jsonObject.put("id",id);
+            searchResult.add(jsonObject);
+        }
+        map.put("data", searchResult);
+        return map;
+    }
+
+
+    public Map<String, Object> mutiSearchNoPage(String indexName, String typeName) throws Exception {
+        SearchRequestBuilder searchRequestBuilder = client.prepareSearch();
+        // 参与搜索的索引
+        searchRequestBuilder.setIndices(indexName);
+        // 参与搜索的索引类型
+        searchRequestBuilder.setTypes(typeName);
+        // 设置分页
+        //排序 .addSort(orderStr, SortOrder.ASC);
+        searchRequestBuilder.setFrom(0).setSize(10000);
+        // init QueryBuilder
+        QueryBuilder queryBuilder = queryBuilder();
+        if(queryBuilder == null){
+            throw new NullPointerException("QueryBuilder can not be null !");
+        }
+        searchRequestBuilder.setQuery(queryBuilder);
+        SearchResponse searchResponse = searchRequestBuilder
+                .addAggregation(AggregationBuilders.terms("ipCount").field("ip").size(Integer.MAX_VALUE))
+                .execute()
+                .get();
         SearchHits searchHits = searchResponse.getHits();
         Map<String, Object> map = new HashMap<>();
         map.put("totalCount", searchHits.getTotalHits());

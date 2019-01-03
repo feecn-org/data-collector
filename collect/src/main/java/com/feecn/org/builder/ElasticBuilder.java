@@ -24,16 +24,19 @@ public class ElasticBuilder {
 
     public static Client client;
 
-    private static final String HOST = "192.168.128.148";
+    private static final String HOST = "172.16.125.90";
 
-    private static final String CLUSTER_NAME = "ape-area";
+    private static final String CLUSTER_NAME = "bs-es-cluster";
 
     private static final int PORT = 9300;
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticBuilder.class);
 
     public ElasticBuilder() {
-        System.out.println("Aaaa");
+    }
+
+    protected void init(){
+        logger.info(String.format("ElasticBuilder %s","init"));
     }
 
     static {

@@ -6,6 +6,9 @@ import org.elasticsearch.index.query.QueryBuilder;
 import java.util.List;
 
 
+/**
+ * @author pczhangyu
+ */
 public class BoolQuerySearchBuilder extends AbstractSearchBuilder {
 
     @Override

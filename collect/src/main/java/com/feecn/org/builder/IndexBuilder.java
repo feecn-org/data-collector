@@ -48,10 +48,13 @@ public class IndexBuilder extends ElasticBuilder {
      * @param id
      * @return
      */
-    public DeleteResponse delete(String index, String type, String id) {
+//    public DeleteResponse delete(String index, String type, String id) {
+//        return client.prepareDelete(index, type, id).get();
+//    }
+
+    public static DeleteResponse delete(String index, String type, String id) {
         return client.prepareDelete(index, type, id).get();
     }
-
     /**
      * 是否存在
      * @param param
